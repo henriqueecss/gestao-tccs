@@ -1,13 +1,19 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useAlunos } from '../hooks/useAlunos';
+import { useAlunos, useDeleteAluno } from '../hooks/useAlunos';
 
 export default function Alunos() {
   const [search, setSearch] = useState('');
   const { data: alunos, isLoading, error } = useAlunos(search || undefined);
+  const deleteAluno = useDeleteAluno();
 
-  // CORREÇÃO: Lida com a paginação do Django REST Framework ou dados vazios
-const listaAlunos = alunos ? (Array.isArray(alunos) ? alunos : (alunos as any).results || []) : [];
+  const listaAlunos = alunos ? (Array.isArray(alunos) ? alunos : (alunos as any).results || []) : [];
+
+  const handleDelete = (id: number, nome: string) => {
+    if (confirm(`Tem certeza que deseja excluir o aluno "${nome}"?`)) {
+      deleteAluno.mutate(id);
+    }
+  };
 
   return (
     <div className="animate-fade-in space-y-6">
@@ -44,6 +50,7 @@ const listaAlunos = alunos ? (Array.isArray(alunos) ? alunos : (alunos as any).r
                   <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Nome</th>
                   <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Matrícula</th>
                   <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Curso</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase text-right">Ações</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -53,11 +60,15 @@ const listaAlunos = alunos ? (Array.isArray(alunos) ? alunos : (alunos as any).r
                     <td className="px-6 py-4 font-medium text-slate-800">{aluno.nome}</td>
                     <td className="px-6 py-4 text-sm text-slate-600">{aluno.matricula}</td>
                     <td className="px-6 py-4 text-sm text-slate-600">{aluno.curso}</td>
+                    <td className="px-6 py-4 text-right space-x-3">
+                      <Link to={`/alunos/${aluno.id}/editar`} className="text-blue-500 hover:text-blue-700 font-medium text-sm">Editar</Link>
+                      <button onClick={() => handleDelete(aluno.id, aluno.nome)} className="text-rose-500 hover:text-rose-700 font-medium text-sm">Excluir</button>
+                    </td>
                   </tr>
                 ))}
                 {listaAlunos.length === 0 && (
                   <tr>
-                    <td colSpan={4} className="px-6 py-12 text-center text-slate-500">Nenhum aluno encontrado.</td>
+                    <td colSpan={5} className="px-6 py-12 text-center text-slate-500">Nenhum aluno encontrado.</td>
                   </tr>
                 )}
               </tbody>

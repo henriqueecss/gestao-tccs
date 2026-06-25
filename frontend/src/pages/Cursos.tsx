@@ -1,11 +1,17 @@
 import { Link } from 'react-router-dom';
-import { useCursos } from '../hooks/useCursos';
+import { useCursos, useDeleteCurso } from '../hooks/useCursos';
 
 export default function Cursos() {
   const { data: cursos, isLoading, error } = useCursos();
+  const deleteCurso = useDeleteCurso();
 
-  // Trava de segurança para paginação
   const listaCursos = cursos ? (Array.isArray(cursos) ? cursos : (cursos as any).results || []) : [];
+
+  const handleDelete = (id: number, nome: string) => {
+    if (confirm(`Tem certeza que deseja excluir o curso "${nome}"?`)) {
+      deleteCurso.mutate(id);
+    }
+  };
 
   return (
     <div className="animate-fade-in space-y-6">
@@ -32,6 +38,7 @@ export default function Cursos() {
                   <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Nome</th>
                   <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Sigla</th>
                   <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Código</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase text-right">Ações</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -41,11 +48,15 @@ export default function Cursos() {
                     <td className="px-6 py-4 font-medium text-slate-800">{curso.nome}</td>
                     <td className="px-6 py-4 font-semibold text-blue-600">{curso.sigla}</td>
                     <td className="px-6 py-4 text-sm text-slate-600">{curso.codigo}</td>
+                    <td className="px-6 py-4 text-right space-x-3">
+                      <Link to={`/cursos/${curso.id}/editar`} className="text-blue-500 hover:text-blue-700 font-medium text-sm">Editar</Link>
+                      <button onClick={() => handleDelete(curso.id, curso.nome)} className="text-rose-500 hover:text-rose-700 font-medium text-sm">Excluir</button>
+                    </td>
                   </tr>
                 ))}
                 {listaCursos.length === 0 && (
                   <tr>
-                    <td colSpan={4} className="px-6 py-12 text-center text-slate-500">Nenhum curso encontrado.</td>
+                    <td colSpan={5} className="px-6 py-12 text-center text-slate-500">Nenhum curso encontrado.</td>
                   </tr>
                 )}
               </tbody>

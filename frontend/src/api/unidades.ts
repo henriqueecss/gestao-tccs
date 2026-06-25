@@ -10,3 +10,12 @@ export async function createUnidade(body: Omit<UnidadeAcademica, 'id'>): Promise
   const { data } = await api.post<UnidadeAcademica>('/unidades-academicas/', body);
   return data;
 }
+
+export async function updateUnidade(id: number, body: Omit<UnidadeAcademica, 'id'>): Promise<UnidadeAcademica> {
+  const { data } = await api.put<UnidadeAcademica>(`/unidades-academicas/${id}/`, body);
+  return data;
+}
+
+export async function deleteUnidade(id: number): Promise<void> {
+  await api.delete(`/unidades-academicas/${id}/`);
+}

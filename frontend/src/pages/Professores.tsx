@@ -1,13 +1,19 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useProfessores } from '../hooks/useProfessores';
+import { useProfessores, useDeleteProfessor } from '../hooks/useProfessores';
 
 export default function Professores() {
   const [search, setSearch] = useState('');
   const { data: professores, isLoading, error } = useProfessores(search || undefined);
+  const deleteProfessor = useDeleteProfessor();
 
-  // Trava de segurança para paginação
   const listaProfessores = professores ? (Array.isArray(professores) ? professores : (professores as any).results || []) : [];
+
+  const handleDelete = (id: number, nome: string) => {
+    if (confirm(`Tem certeza que deseja excluir o professor "${nome}"?`)) {
+      deleteProfessor.mutate(id);
+    }
+  };
 
   return (
     <div className="animate-fade-in space-y-6">
@@ -43,6 +49,7 @@ export default function Professores() {
                   <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">ID</th>
                   <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Nome</th>
                   <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Departamento</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase text-right">Ações</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -55,11 +62,15 @@ export default function Professores() {
                         {prof.departamento}
                       </span>
                     </td>
+                    <td className="px-6 py-4 text-right space-x-3">
+                      <Link to={`/professores/${prof.id}/editar`} className="text-blue-500 hover:text-blue-700 font-medium text-sm">Editar</Link>
+                      <button onClick={() => handleDelete(prof.id, prof.nome)} className="text-rose-500 hover:text-rose-700 font-medium text-sm">Excluir</button>
+                    </td>
                   </tr>
                 ))}
                 {listaProfessores.length === 0 && (
                   <tr>
-                    <td colSpan={3} className="px-6 py-12 text-center text-slate-500">Nenhum professor encontrado.</td>
+                    <td colSpan={4} className="px-6 py-12 text-center text-slate-500">Nenhum professor encontrado.</td>
                   </tr>
                 )}
               </tbody>

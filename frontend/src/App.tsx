@@ -24,14 +24,19 @@ export default function App() {
           <Route path="/tccs/novo" element={<TccForm />} />
           <Route path="/alunos" element={<Alunos />} />
           <Route path="/alunos/novo" element={<AlunoForm />} />
+          <Route path="/alunos/:id/editar" element={<AlunoForm />} />
           <Route path="/professores" element={<Professores />} />
           <Route path="/professores/novo" element={<ProfessorForm />} />
+          <Route path="/professores/:id/editar" element={<ProfessorForm />} />
           <Route path="/cursos" element={<Cursos />} />
           <Route path="/cursos/novo" element={<CursoForm />} />
+          <Route path="/cursos/:id/editar" element={<CursoForm />} />
           <Route path="/departamentos" element={<Departamentos />} />
           <Route path="/departamentos/novo" element={<DepartamentoForm />} />
+          <Route path="/departamentos/:id/editar" element={<DepartamentoForm />} />
           <Route path="/unidades" element={<Unidades />} />
           <Route path="/unidades/novo" element={<UnidadeForm />} />
+          <Route path="/unidades/:id/editar" element={<UnidadeForm />} />
         </Route>
       </Routes>
     </BrowserRouter>
