@@ -4,45 +4,53 @@ import { useCursos } from '../hooks/useCursos';
 export default function Cursos() {
   const { data: cursos, isLoading, error } = useCursos();
 
+  // Trava de segurança para paginação
+  const listaCursos = cursos ? (Array.isArray(cursos) ? cursos : (cursos as any).results || []) : [];
+
   return (
-    <div>
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold">Cursos</h2>
-        <Link to="/cursos/novo" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">+ Novo Curso</Link>
+    <div className="animate-fade-in space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <div>
+          <h2 className="text-2xl font-bold text-slate-800">Cursos</h2>
+          <p className="text-slate-500 text-sm mt-1">Gestão de cursos da instituição</p>
+        </div>
+        <Link to="/cursos/novo" className="px-5 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-sm">
+          + Novo Curso
+        </Link>
       </div>
 
-      {isLoading && <p className="text-gray-500">Carregando...</p>}
-      {error && <p className="text-red-600">Erro ao carregar cursos.</p>}
+      {isLoading && <div className="text-center py-8 text-slate-500">Carregando...</div>}
+      {error && <div className="p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl">Erro ao carregar cursos.</div>}
 
-      {cursos && (
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white border border-gray-200 rounded">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">ID</th>
-                <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Nome</th>
-                <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Sigla</th>
-                <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Código</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cursos.map((curso) => (
-                <tr key={curso.id} className="border-t border-gray-200 hover:bg-gray-50">
-                  <td className="px-4 py-2 text-sm">{curso.id}</td>
-                  <td className="px-4 py-2 text-sm">{curso.nome}</td>
-                  <td className="px-4 py-2 text-sm">{curso.sigla}</td>
-                  <td className="px-4 py-2 text-sm">{curso.codigo}</td>
+      {!isLoading && !error && (
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-200">
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">ID</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Nome</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Sigla</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Código</th>
                 </tr>
-              ))}
-              {cursos.length === 0 && (
-                <tr>
-                  <td colSpan={4} className="px-4 py-6 text-center text-gray-400">
-                    Nenhum curso encontrado.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-slate-200">
+                {listaCursos.map((curso: any) => (
+                  <tr key={curso.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="px-6 py-4 text-sm text-slate-600">#{curso.id}</td>
+                    <td className="px-6 py-4 font-medium text-slate-800">{curso.nome}</td>
+                    <td className="px-6 py-4 font-semibold text-blue-600">{curso.sigla}</td>
+                    <td className="px-6 py-4 text-sm text-slate-600">{curso.codigo}</td>
+                  </tr>
+                ))}
+                {listaCursos.length === 0 && (
+                  <tr>
+                    <td colSpan={4} className="px-6 py-12 text-center text-slate-500">Nenhum curso encontrado.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>

@@ -4,45 +4,57 @@ import { useDepartamentos } from '../hooks/useDepartamentos';
 export default function Departamentos() {
   const { data: departamentos, isLoading, error } = useDepartamentos();
 
+  // Trava de segurança para paginação
+  const listaDepartamentos = departamentos ? (Array.isArray(departamentos) ? departamentos : (departamentos as any).results || []) : [];
+
   return (
-    <div>
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold">Departamentos</h2>
-        <Link to="/departamentos/novo" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm">+ Novo Departamento</Link>
+    <div className="animate-fade-in space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+        <div>
+          <h2 className="text-2xl font-bold text-slate-800">Departamentos</h2>
+          <p className="text-slate-500 text-sm mt-1">Gestão de departamentos da instituição</p>
+        </div>
+        <Link to="/departamentos/novo" className="px-5 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-sm">
+          + Novo Departamento
+        </Link>
       </div>
 
-      {isLoading && <p className="text-gray-500">Carregando...</p>}
-      {error && <p className="text-red-600">Erro ao carregar departamentos.</p>}
+      {isLoading && <div className="text-center py-8 text-slate-500">Carregando...</div>}
+      {error && <div className="p-4 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl">Erro ao carregar departamentos.</div>}
 
-      {departamentos && (
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white border border-gray-200 rounded">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">ID</th>
-                <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Nome</th>
-                <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Sigla</th>
-                <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Unidade Acadêmica</th>
-              </tr>
-            </thead>
-            <tbody>
-              {departamentos.map((dep) => (
-                <tr key={dep.id} className="border-t border-gray-200 hover:bg-gray-50">
-                  <td className="px-4 py-2 text-sm">{dep.id}</td>
-                  <td className="px-4 py-2 text-sm">{dep.nome}</td>
-                  <td className="px-4 py-2 text-sm">{dep.sigla}</td>
-                  <td className="px-4 py-2 text-sm">{dep.unidade_academica}</td>
+      {!isLoading && !error && (
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-200">
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">ID</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Nome</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Sigla</th>
+                  <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase">Unidade Acadêmica</th>
                 </tr>
-              ))}
-              {departamentos.length === 0 && (
-                <tr>
-                  <td colSpan={4} className="px-4 py-6 text-center text-gray-400">
-                    Nenhum departamento encontrado.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-slate-200">
+                {listaDepartamentos.map((dep: any) => (
+                  <tr key={dep.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="px-6 py-4 text-sm text-slate-600">#{dep.id}</td>
+                    <td className="px-6 py-4 font-medium text-slate-800">{dep.nome}</td>
+                    <td className="px-6 py-4 font-semibold text-blue-600">{dep.sigla}</td>
+                    <td className="px-6 py-4 text-sm text-slate-600">
+                      <span className="px-2.5 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                        {dep.unidade_academica}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+                {listaDepartamentos.length === 0 && (
+                  <tr>
+                    <td colSpan={4} className="px-6 py-12 text-center text-slate-500">Nenhum departamento encontrado.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
